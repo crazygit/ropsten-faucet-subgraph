@@ -1,6 +1,5 @@
-type ExampleEntity @entity {
+type WithDrawEntity @entity {
   id: ID!
-  count: BigInt!
-  from: Bytes! # address
+  receiver: Bytes! # address
   amount: BigInt! # uint256
 }

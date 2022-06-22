@@ -1,4 +1,6 @@
-specVersion: 0.0.1
+specVersion: 0.0.4
+description: Faucet for Ropsten
+repository: https://github.com/crazygit/ropsten-faucet-subgraph
 schema:
   file: ./schema.graphql
 dataSources:
@@ -21,12 +23,12 @@ dataSources:
         - name: Faucet
           file: ./abis/Faucet.json
       eventHandlers:
-        - event: FallbackEvent(indexed address,uint256)
-          handler: handleFallbackEvent
-        - event: OwnershipTransferred(indexed address,indexed address)
-          handler: handleOwnershipTransferred
-        - event: ReceiveEvent(indexed address,uint256)
-          handler: handleReceiveEvent
+        # - event: FallbackEvent(indexed address,uint256)
+        #   handler: handleFallbackEvent
+        # - event: OwnershipTransferred(indexed address,indexed address)
+        #   handler: handleOwnershipTransferred
+        # - event: ReceiveEvent(indexed address,uint256)
+        #   handler: handleReceiveEvent
         - event: WithDrawEvent(indexed address,uint256)
           handler: handleWithDrawEvent
       file: ./src/faucet.ts
