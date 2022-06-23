@@ -1,0 +1,61 @@
+version: "3"
+services:
+  graph-node:
+    image: graphprotocol/graph-node
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+      - "8020:8020"
+      - "8030:8030"
+      - "8040:8040"
+    depends_on:
+      - ipfs
+      - postgres
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    environment:
+      postgres_host: postgres
+      postgres_user: graph-node
+      postgres_pass: let-me-in
+      postgres_db: graph-node
+      ipfs: "ipfs:5001"
+      ethereum: "localhost:http://host.docker.internal:8545"
+      GRAPH_LOG: info
+  # https://docs.ipfs.io/how-to/run-ipfs-inside-docker/#set-up
+  ipfs:
+    image: ipfs/go-ipfs:v0.13.0
+    ports:
+      # 5001 -> RPC API, NEVER EXPOSE THE RPC API TO THE PUBLIC INTERNET, The API port provides admin-level access to your IPFS node
+      # 4001 -> P2P TCP/QUIC transports
+      # 8080 -> Gateway
+      - "5001:5001"
+      - "4001:4001/udp"
+      - "4001:4001"
+      - "8080:8080"
+    volumes:
+      - ./data/ipfs_staging:/export
+      - ./data/ipfs_data:/data/ipfs
+  # https://hub.docker.com/_/postgres
+  postgres:
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    command: ["postgres", "-cshared_preload_libraries=pg_stat_statements"]
+    environment:
+      POSTGRES_USER: graph-node
+      POSTGRES_PASSWORD: let-me-in
+      POSTGRES_DB: graph-node
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+  # https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html
+  pgadmin:
+    image: dpage/pgadmin4:6
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: secret
+    ports:
+      - 5433:80
