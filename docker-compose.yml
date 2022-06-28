@@ -22,16 +22,32 @@ services:
       ethereum: "localhost:http://host.docker.internal:8545"
       GRAPH_LOG: info
   # https://docs.ipfs.io/how-to/run-ipfs-inside-docker/#set-up
+  # https://github.com/ipfs/go-ipfs/blob/master/Dockerfile
+  #
+  # Ports info
+  #
+  # Swarm TCP; should be exposed to the public
+  # EXPOSE 4001
+  # # Swarm UDP; should be exposed to the public
+  # EXPOSE 4001/udp
+  # # Daemon API; must not be exposed publicly but to client services under you control
+  # EXPOSE 5001
+  # # Web Gateway; can be exposed publicly with a proxy, e.g. as https://ipfs.example.org
+  # EXPOSE 8080
+  # # Swarm Websockets; must be exposed publicly when the node is listening using the websocket transport (/ipX/.../tcp/8081/ws).
+  # EXPOSE 8081
   ipfs:
     image: ipfs/go-ipfs:v0.13.0
     ports:
       # 5001 -> RPC API, NEVER EXPOSE THE RPC API TO THE PUBLIC INTERNET, The API port provides admin-level access to your IPFS node
       # 4001 -> P2P TCP/QUIC transports
       # 8080 -> Gateway
+      # 8081 -> Websocket
       - "5001:5001"
       - "4001:4001/udp"
       - "4001:4001"
       - "8080:8080"
+      - "8081:8081"
     volumes:
       - ./data/ipfs_staging:/export
       - ./data/ipfs_data:/data/ipfs
